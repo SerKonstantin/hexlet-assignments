@@ -21,15 +21,8 @@ public final class App {
             var page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
             var per = ctx.queryParamAsClass("per", Integer.class).getOrDefault(5);
 
-            var users = Data.getUsers();
             var startIndex = (page - 1) * per;
-
-            List<Map<String, String>> result = new ArrayList<>(per);
-            if (startIndex + per < users.size() && startIndex >= 0) {
-                for (var i = startIndex; i < startIndex + per; i++) {
-                    result.add(users.get(i));
-                }
-            }
+            List<Map<String, String>> result = USERS.subList(startIndex, startIndex + per);
 
             ctx.json(result);
         });
