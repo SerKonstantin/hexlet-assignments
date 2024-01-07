@@ -40,17 +40,17 @@ public final class App {
             try {
                 var title = ctx.formParamAsClass("title", String.class)
                         .check(value -> value.trim().length() >= 2, "Название не должно быть короче двух символов")
-                        .check(value -> {
-                            return ArticleRepository.getEntities().stream()
-                                    .noneMatch(article -> article.getTitle().equals(value));
-                        }, "Статья с таким названием уже существует")
+                        .check(value -> !ArticleRepository.existsByTitle(value.trim()), "Статья с таким названием уже существует")
                         .get().trim();
+
                 var content = ctx.formParamAsClass("content", String.class)
                         .check(value -> value.trim().length() >= 10, "Статья должна быть не короче 10 символов")
                         .get().trim();
+
                 var article = new Article(title, content);
                 ArticleRepository.save(article);
                 ctx.redirect("/articles");
+
             } catch (ValidationException e) {
                 var title = ctx.formParam("title");
                 var content = ctx.formParam("content");
