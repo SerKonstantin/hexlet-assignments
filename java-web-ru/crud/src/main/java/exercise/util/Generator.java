@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import exercise.model.Post;
 
 public class Generator {
-    private static final int ITEMS_COUNT = 32;
+    private static final int ITEMS_COUNT = 32 + 50;
     private static final Random RANDOM = new Random(123);
 
     public static List<Post> getPosts() {
