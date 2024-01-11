@@ -40,7 +40,7 @@ public class UsersController {
 
         var userToken = ctx.cookie("token");
 
-        if (user != null || userToken.equals(user.getToken())) {
+        if (user == null || userToken.equals(user.getToken())) {
             ctx.render("users/show.jte", Collections.singletonMap("user", user));
         } else {
             ctx.redirect(NamedRoutes.buildUserPath());
