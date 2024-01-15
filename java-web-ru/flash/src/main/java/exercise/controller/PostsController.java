@@ -30,12 +30,13 @@ public class PostsController {
             var post = new Post(name, body);
             PostRepository.save(post);
             ctx.sessionAttribute("flash", "Пост был успешно создан!");
+            ctx.sessionAttribute("flash-status", "success");
             ctx.redirect(NamedRoutes.postsPath());
 
         } catch (ValidationException e) {
             var name = ctx.formParam("name");
             var page = new BuildPostPage(name, body, e.getErrors());
-            ctx.render("posts/build.jte", Collections.singletonMap("page", page));
+            ctx.render("posts/build.jte", Collections.singletonMap("page", page)).status(422);
         }
     }
 
@@ -43,6 +44,7 @@ public class PostsController {
         var posts = PostRepository.getEntities();
         var page = new PostsPage(posts);
         page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setFlashType(ctx.consumeSessionAttribute("flash-type"));
         ctx.render("posts/index.jte", Collections.singletonMap("page", page));
     }
     // END
