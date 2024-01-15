@@ -6,7 +6,15 @@
 @template.layout.page(
     page = page,
     content = @`
-    @if(page != null && page.getPosts() != null)
+    @if(page.getPosts().isEmpty())
+        <p>Posts list is empty</p>
+    @else
+        <h1>Все посты</h1>
+
+        <div class="mb-3">
+            <a href="${NamedRoutes.buildPostPath()}">Создать новый пост</a>
+        </div>
+
         <ul>
             @for(var post : page.getPosts())
                 <li>
@@ -14,8 +22,6 @@
                 </li>
             @endfor
         </ul>
-    @else
-        <p>Posts list is empty</p>
     @endif
     `
 )
