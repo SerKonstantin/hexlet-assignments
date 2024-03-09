@@ -1,0 +1,9 @@
+---
+
+# BEGIN
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      dll-auto: update
+# END
