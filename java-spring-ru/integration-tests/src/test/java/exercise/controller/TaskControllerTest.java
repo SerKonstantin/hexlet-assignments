@@ -87,34 +87,38 @@ class ApplicationTest {
 
     @Test
     public void testCreate() throws Exception {
-        var taskData = generateSomeTask();
+        var taskData = generateTask();
 
         var request = post("/tasks")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(taskData));
 
         var result = mockMvc.perform(request)
-                .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(status().isCreated());
 
-        var responseBody = result.getResponse().getContentAsString();
-        assertThat(responseBody).contains(mockTitle);
-        assertThat(responseBody).contains(mockDescription);
+        var task = taskRepository.findByTitle(taskData.getTitle())
+                .orElseThrow(() -> new ResourceNotFoundException("\ntestCreate failed\n"));
+
+        assertThat(task.getTitle()).isEqualTo(taskData.getTitle());
+        assertThat(task.getDescription()).isEqualTo(taskData.getDescription());
     }
 
     @Test
     public void testShow() throws Exception {
-        var task = generateSomeTask();
+        var task = generateTask();
         taskRepository.save(task);
         var id = task.getId();
 
-        var result = mockMvc.perform(get("/tasks/" + id))
+        var result = mockMvc.perform(get("/tasks/{id}", id))
                 .andExpect(status().isOk())
                 .andReturn();
 
         var responseBody = result.getResponse().getContentAsString();
-        assertThat(responseBody).contains(mockTitle);
-        assertThat(responseBody).contains(mockDescription);
+
+        assertThatJson(responseBody).and(
+                body -> body.node("title").isEqualTo(task.getTitle()),
+                body -> body.node("description").isEqualTo(task.getDescription())
+        );
     }
 
     @Test
