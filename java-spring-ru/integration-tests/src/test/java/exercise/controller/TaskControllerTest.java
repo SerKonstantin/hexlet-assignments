@@ -74,17 +74,6 @@ class ApplicationTest {
     }
 
     // BEGIN
-    private final String mockTitle = "some title";
-    private final String mockDescription = "some description";
-
-    private Task generateSomeTask() {
-        return Instancio.of(Task.class)
-                .ignore(Select.field(Task::getId))
-                .supply(Select.field(Task::getTitle), () -> mockTitle)
-                .supply(Select.field(Task::getDescription), () -> mockDescription)
-                .create();
-    }
-
     @Test
     public void testCreate() throws Exception {
         var taskData = generateTask();
@@ -123,7 +112,7 @@ class ApplicationTest {
 
     @Test
     public void testUpdate() throws Exception {
-        var task = generateSomeTask();
+        var task = generateTask();
         taskRepository.save(task);
         var id = task.getId();
 
@@ -131,7 +120,7 @@ class ApplicationTest {
         data.put("title", "new title");
         data.put("description", "new description");
 
-        var request = put("/tasks/" + id)
+        var request = put("/tasks/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
@@ -148,13 +137,14 @@ class ApplicationTest {
 
     @Test
     public void testDelete() throws Exception {
-        var task = generateSomeTask();
+        var task = generateTask();
         taskRepository.save(task);
         var id = task.getId();
 
         assertThat(taskRepository.findById(id)).isPresent();
 
-        mockMvc.perform(delete("/tasks/" + id));
+        mockMvc.perform(delete("/tasks/{id}", id))
+                .andExpect(status().isOk());
 
         assertThat(taskRepository.findById(id)).isEmpty();
     }
