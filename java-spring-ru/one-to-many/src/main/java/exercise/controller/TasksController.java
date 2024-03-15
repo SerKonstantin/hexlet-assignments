@@ -62,10 +62,8 @@ public class TasksController {
                                 "User with id = " + taskData.getAssigneeId() + " not found"
                         ));
 
+        task.setAssignee(user);
         taskRepository.save(task);
-        user.addTask(task);
-        userRepository.save(user);
-
         return taskMapper.map(task);
     }
 
@@ -79,29 +77,15 @@ public class TasksController {
                         "User with id = " + taskData.getAssigneeId() + " not found"
                 ));
 
-        user.removeTask(task);
         taskMapper.update(taskData, task);
+        task.setAssignee(user);
         taskRepository.save(task);
-        user.addTask(task);
-        userRepository.save(user);
-
         return taskMapper.map(task);
     }
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
-        var task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task with id " + id + " not found"));
-
-        var user = userRepository.findById(task.getAssignee().getId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User with id = " + task.getAssignee().getId() + " not found"
-                ));
-
-        user.removeTask(task);
-        userRepository.save(user);
-
         taskRepository.deleteById(id);
     }
     // END
