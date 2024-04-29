@@ -2,6 +2,7 @@ package exercise;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 class App {
@@ -13,11 +14,15 @@ class App {
         var threadMin = new MinThread(numbers);
 
         threadMax.start();
+        LOGGER.log(Level.INFO, "Thread " + threadMax.getName() + " started");
         threadMin.start();
+        LOGGER.log(Level.INFO, "Thread " + threadMin.getName() + " started");
 
         try {
             threadMax.join();
+            LOGGER.log(Level.INFO, "Thread " + threadMax.getName() + " finished");
             threadMin.join();
+            LOGGER.log(Level.INFO, "Thread " + threadMin.getName() + " finished");
         } catch (InterruptedException e) {
             System.out.println("Поток был прерван");
         }
